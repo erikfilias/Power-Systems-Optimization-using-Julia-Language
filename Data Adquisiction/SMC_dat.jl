@@ -4,12 +4,12 @@
 # IData = 1
 using JuMP
 #SYSTEM Parameters
-Sbase = 100
-Vnom = 1.00
-Vmax = 1.05
-Vmin = 0.95
-pfcap = 0.95
-pfind = 0.99
+# Sbase = 100
+# Vnom = 1.00
+# Vmax = 1.05
+# Vmin = 0.95
+# pfcap = 0.95
+# pfind = 0.99
 
 
 # Base System
