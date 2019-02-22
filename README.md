@@ -5,14 +5,9 @@ This repository aims to share our advances in AC Power Flow Models in order to s
 JuMP is an open-source modelling language created in [MIT](http://www.mit.edu/). The spirit of JuMP is to serve as optimization plattform for every kind of proffessional in order to solve optimization problems such as linear, non-linear, mixed-integer, convex optimization, etc. There are so many advantages to use Julia & JuMP due to the great communities that are working on developing tools known as **packages**. Actually, there are interfaces to differents **solvers** (open source and commercial); among these are: MINOS, SCIP, CONOPT, CPLEX, MOSEK, IPOPT,  XPRESS, GLPK, etc. 
 In addition, this modelling language allows to use familiar functions of differential equations, integrations, statistics, etc. It´s like to mix [MATLAB](https://www.mathworks.com/products/matlab.html) or [Python](https://www.python.org/) with [AMPL](https://ampl.com/) or [GAMS](https://www.gams.com/). 
 
-In Peru, the power systems operator [COES SINAC](http://www.coes.org.pe/portal/) is carrying out the calculation of the CMgCP and its decomposition into its components for the purposes of the valuations in the Short Term market of the SEIN, with the GAMS. And it is foreseen that the Short Term model for cargo dispatch, will enter into operation at the beginning of next year.
+![Image](https://www.google.com/search?q=jump+julia+language&source=lnms&tbm=isch&sa=X&ved=0ahUKEwjUh6niktDgAhWrErkGHS3ADVQQ_AUIDygC&biw=1360&bih=608#imgrc=3GssZjthqy1hQM:)
 
 Enjoy it, and give us suggestions!
-
-
-You can use the [editor on GitHub](https://github.com/erikfilias/JuMP-Julia-Language/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
 ### Markdown
 
