@@ -6,3 +6,5 @@ JuMP is an open-source modelling language created in [MIT](http://www.mit.edu/).
 In addition, this modelling language allows to use familiar functions of differential equations, integrations, statistics, etc. It´s like to mix [MATLAB](https://www.mathworks.com/products/matlab.html) or [Python](https://www.python.org/) with [AMPL](https://ampl.com/) or [GAMS](https://www.gams.com/). 
 
 Enjoy it, and give us suggestions!
+
+Best regards!
