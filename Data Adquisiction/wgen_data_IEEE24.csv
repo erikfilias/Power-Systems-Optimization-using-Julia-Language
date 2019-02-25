@@ -1,3 +1,0 @@
-wgen_Item,Bus,Pg0,Qg0,Pmax,Pmin,Qmax,Qmin,Vg,ag,bg,cg,status,scenarios
-1,11,70,0,270,0,0,0,1.045,0,0,0,1,11
-2,16,70,0,420,0,0,0,1.045,0,0,0,1,11
