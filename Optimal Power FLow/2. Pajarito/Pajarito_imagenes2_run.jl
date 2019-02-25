@@ -43,7 +43,7 @@ nstep=[0 0 5]
     branchaij=collect(Base.product(aij[1], aij[2],aij[3])) #Falta mejorar esta parte
     for i=1:ncomb
         for k=1:nbranch
-        Y[i][convert(Int, Branchfrom[k]),convert(Int, Branchto[k])] = Y[i][convert(Int, Branchfrom[k]),convert(Int, Branchto[k])] + Branchy[k]*branchaij[i][k]
+        Y[i][convert(Int, Branchfrom[k]),convert(Int, Branchto[k])] = Y[i][convert(Int, Branchfrom[k]),convert(Int, Branchto[k])] - Branchy[k]*branchaij[i][k]
 
         Y[i][convert(Int, Branchto[k]),convert(Int, Branchfrom[k])] = Y[i][convert(Int, Branchfrom[k]),convert(Int, Branchto[k])]
         end
@@ -134,25 +134,25 @@ function flowbai(l,nbus,Busnumber,Bus,Branch,Branchto,Branchfrom,out_lines,in_li
                 for i=1:a
                     j=convert(Int,(Branchto[out_lines[k]])[i])
 
-                    mtemporal1[k+k-1,j+j-1]=real(Y[l][k,j])
-                    mtemporal1[k+k,j+j]=    real(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k-1]=real(Y[l][k,j])
-                    mtemporal1[j+j,k+k]=    real(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j-1]=-real(Y[l][k,j])
+                    mtemporal1[k+k,j+j]=    -real(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k-1]=-real(Y[l][k,j])
+                    mtemporal1[j+j,k+k]=    -real(Y[l][k,j])
 
-                    mtemporal1[k+k-1,j+j]= -imag(Y[l][k,j])
-                    mtemporal1[k+k,j+j-1]=  imag(Y[l][k,j])
-                    mtemporal1[j+j,k+k-1]= -imag(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k]=  imag(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j]=   imag(Y[l][k,j])
+                    mtemporal1[k+k,j+j-1]=  -imag(Y[l][k,j])
+                    mtemporal1[j+j,k+k-1]=   imag(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k]=  -imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j-1]=-imag(Y[l][k,j])
-                    mtemporal3[k+k,j+j]=    -imag(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k-1]=-imag(Y[l][k,j])
-                    mtemporal3[j+j,k+k]=    -imag(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j-1]=imag(Y[l][k,j])
+                    mtemporal3[k+k,j+j]=    imag(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k-1]=imag(Y[l][k,j])
+                    mtemporal3[j+j,k+k]=    imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j]=  -real(Y[l][k,j])
-                    mtemporal3[k+k,j+j-1]=   real(Y[l][k,j])
-                    mtemporal3[j+j,k+k-1]=  -real(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k]=   real(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j]=   real(Y[l][k,j])
+                    mtemporal3[k+k,j+j-1]=  -real(Y[l][k,j])
+                    mtemporal3[j+j,k+k-1]=   real(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k]=  -real(Y[l][k,j])
 
                 end
 
@@ -161,25 +161,25 @@ function flowbai(l,nbus,Busnumber,Bus,Branch,Branchto,Branchfrom,out_lines,in_li
                 for i=1:b
                     j=convert(Int,(Branchfrom[in_lines[k]])[i])
 
-                    mtemporal1[k+k-1,j+j-1]= real(Y[l][k,j])
-                    mtemporal1[k+k,j+j]=     real(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k-1]= real(Y[l][k,j])
-                    mtemporal1[j+j,k+k]=     real(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j-1]= -real(Y[l][k,j])
+                    mtemporal1[k+k,j+j]=     -real(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k-1]= -real(Y[l][k,j])
+                    mtemporal1[j+j,k+k]=     -real(Y[l][k,j])
 
-                    mtemporal1[k+k-1,j+j]=  -imag(Y[l][k,j])
-                    mtemporal1[k+k,j+j-1]=   imag(Y[l][k,j])
-                    mtemporal1[j+j,k+k-1]=  -imag(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k]=   imag(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j]=   imag(Y[l][k,j])
+                    mtemporal1[k+k,j+j-1]=  -imag(Y[l][k,j])
+                    mtemporal1[j+j,k+k-1]=   imag(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k]=  -imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j-1]=-imag(Y[l][k,j])
-                    mtemporal3[k+k,j+j]=    -imag(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k-1]=-imag(Y[l][k,j])
-                    mtemporal3[j+j,k+k]=    -imag(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j-1]=imag(Y[l][k,j])
+                    mtemporal3[k+k,j+j]=    imag(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k-1]=imag(Y[l][k,j])
+                    mtemporal3[j+j,k+k]=    imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j]=  -real(Y[l][k,j])
-                    mtemporal3[k+k,j+j-1]=   real(Y[l][k,j])
-                    mtemporal3[j+j,k+k-1]=  -real(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k]=   real(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j]=  real(Y[l][k,j])
+                    mtemporal3[k+k,j+j-1]=  -real(Y[l][k,j])
+                    mtemporal3[j+j,k+k-1]=  real(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k]=  -real(Y[l][k,j])
 
                 end
                 WBp=mtemporal1+mtemporal
@@ -214,25 +214,25 @@ function flowbai(l,nbus,Busnumber,Bus,Branch,Branchto,Branchfrom,out_lines,in_li
                 for i=1:a
                     j=convert(Int,(Branchto[out_lines[k]])[i])
 
-                    mtemporal1[k+k-1,j+j-1]=real(Y[l][k,j])
-                    mtemporal1[k+k,j+j]=    real(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k-1]=real(Y[l][k,j])
-                    mtemporal1[j+j,k+k]=    real(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j-1]=-real(Y[l][k,j])
+                    mtemporal1[k+k,j+j]=    -real(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k-1]=-real(Y[l][k,j])
+                    mtemporal1[j+j,k+k]=    -real(Y[l][k,j])
 
-                    mtemporal1[k+k-1,j+j]= -imag(Y[l][k,j])
-                    mtemporal1[k+k,j+j-1]=  imag(Y[l][k,j])
-                    mtemporal1[j+j,k+k-1]= -imag(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k]=  imag(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j]=  imag(Y[l][k,j])
+                    mtemporal1[k+k,j+j-1]= -imag(Y[l][k,j])
+                    mtemporal1[j+j,k+k-1]=  imag(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k]= -imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j-1]=-imag(Y[l][k,j])
-                    mtemporal3[k+k,j+j]=    -imag(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k-1]=-imag(Y[l][k,j])
-                    mtemporal3[j+j,k+k]=    -imag(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j-1]=imag(Y[l][k,j])
+                    mtemporal3[k+k,j+j]=    imag(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k-1]=imag(Y[l][k,j])
+                    mtemporal3[j+j,k+k]=    imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j]=  -real(Y[l][k,j])
-                    mtemporal3[k+k,j+j-1]=   real(Y[l][k,j])
-                    mtemporal3[j+j,k+k-1]=  -real(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k]=   real(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j]=   real(Y[l][k,j])
+                    mtemporal3[k+k,j+j-1]=  -real(Y[l][k,j])
+                    mtemporal3[j+j,k+k-1]=   real(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k]=  -real(Y[l][k,j])
 
                 end
 
@@ -241,25 +241,25 @@ function flowbai(l,nbus,Busnumber,Bus,Branch,Branchto,Branchfrom,out_lines,in_li
                 for i=1:b
                     j=convert(Int,(Branchfrom[in_lines[k]])[i])
 
-                    mtemporal1[k+k-1,j+j-1]=real(Y[l][k,j])
-                    mtemporal1[k+k,j+j]=    real(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k-1]=real(Y[l][k,j])
-                    mtemporal1[j+j,k+k]=    real(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j-1]=-real(Y[l][k,j])
+                    mtemporal1[k+k,j+j]=    -real(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k-1]=-real(Y[l][k,j])
+                    mtemporal1[j+j,k+k]=    -real(Y[l][k,j])
 
-                    mtemporal1[k+k-1,j+j]= -imag(Y[l][k,j])
-                    mtemporal1[k+k,j+j-1]=  imag(Y[l][k,j])
-                    mtemporal1[j+j,k+k-1]= -imag(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k]=  imag(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j]=  imag(Y[l][k,j])
+                    mtemporal1[k+k,j+j-1]= -imag(Y[l][k,j])
+                    mtemporal1[j+j,k+k-1]=  imag(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k]= -imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j-1]=-imag(Y[l][k,j])
-                    mtemporal3[k+k,j+j]=    -imag(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k-1]=-imag(Y[l][k,j])
-                    mtemporal3[j+j,k+k]=    -imag(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j-1]=imag(Y[l][k,j])
+                    mtemporal3[k+k,j+j]=    imag(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k-1]=imag(Y[l][k,j])
+                    mtemporal3[j+j,k+k]=    imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j]=  -real(Y[l][k,j])
-                    mtemporal3[k+k,j+j-1]=   real(Y[l][k,j])
-                    mtemporal3[j+j,k+k-1]=  -real(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k]=   real(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j]=   real(Y[l][k,j])
+                    mtemporal3[k+k,j+j-1]=  -real(Y[l][k,j])
+                    mtemporal3[j+j,k+k-1]=   real(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k]=  -real(Y[l][k,j])
 
                 end
                 WBp=mtemporal1+mtemporal
@@ -441,25 +441,25 @@ function flowbai2(l,nbus,Busnumber,Bus,Branch,Branchto,Branchfrom,out_lines,in_l
                 for i=1:a
                     j=convert(Int,(Branchto[out_lines[k]])[i])
 
-                    mtemporal1[k+k-1,j+j-1]=real(Y[l][k,j])
-                    mtemporal1[k+k,j+j]=    real(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k-1]=real(Y[l][k,j])
-                    mtemporal1[j+j,k+k]=    real(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j-1]=-real(Y[l][k,j])
+                    mtemporal1[k+k,j+j]=    -real(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k-1]=-real(Y[l][k,j])
+                    mtemporal1[j+j,k+k]=    -real(Y[l][k,j])
 
-                    mtemporal1[k+k-1,j+j]= -imag(Y[l][k,j])
-                    mtemporal1[k+k,j+j-1]=  imag(Y[l][k,j])
-                    mtemporal1[j+j,k+k-1]= -imag(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k]=  imag(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j]=  imag(Y[l][k,j])
+                    mtemporal1[k+k,j+j-1]= -imag(Y[l][k,j])
+                    mtemporal1[j+j,k+k-1]=  imag(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k]= -imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j-1]=-imag(Y[l][k,j])
-                    mtemporal3[k+k,j+j]=    -imag(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k-1]=-imag(Y[l][k,j])
-                    mtemporal3[j+j,k+k]=    -imag(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j-1]=imag(Y[l][k,j])
+                    mtemporal3[k+k,j+j]=    imag(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k-1]=imag(Y[l][k,j])
+                    mtemporal3[j+j,k+k]=    imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j]=  -real(Y[l][k,j])
-                    mtemporal3[k+k,j+j-1]=   real(Y[l][k,j])
-                    mtemporal3[j+j,k+k-1]=  -real(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k]=   real(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j]=  real(Y[l][k,j])
+                    mtemporal3[k+k,j+j-1]=  -real(Y[l][k,j])
+                    mtemporal3[j+j,k+k-1]=  real(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k]=  -real(Y[l][k,j])
 
                 end
 
@@ -468,25 +468,25 @@ function flowbai2(l,nbus,Busnumber,Bus,Branch,Branchto,Branchfrom,out_lines,in_l
                 for i=1:b
                     j=convert(Int,(Branchfrom[in_lines[k]])[i])
 
-                    mtemporal1[k+k-1,j+j-1]= real(Y[l][k,j])
-                    mtemporal1[k+k,j+j]=     real(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k-1]= real(Y[l][k,j])
-                    mtemporal1[j+j,k+k]=     real(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j-1]= -real(Y[l][k,j])
+                    mtemporal1[k+k,j+j]=     -real(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k-1]= -real(Y[l][k,j])
+                    mtemporal1[j+j,k+k]=     -real(Y[l][k,j])
 
-                    mtemporal1[k+k-1,j+j]=  -imag(Y[l][k,j])
-                    mtemporal1[k+k,j+j-1]=   imag(Y[l][k,j])
-                    mtemporal1[j+j,k+k-1]=  -imag(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k]=   imag(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j]=   imag(Y[l][k,j])
+                    mtemporal1[k+k,j+j-1]=  -imag(Y[l][k,j])
+                    mtemporal1[j+j,k+k-1]=   imag(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k]=  -imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j-1]=-imag(Y[l][k,j])
-                    mtemporal3[k+k,j+j]=    -imag(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k-1]=-imag(Y[l][k,j])
-                    mtemporal3[j+j,k+k]=    -imag(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j-1]=imag(Y[l][k,j])
+                    mtemporal3[k+k,j+j]=    imag(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k-1]=imag(Y[l][k,j])
+                    mtemporal3[j+j,k+k]=    imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j]=  -real(Y[l][k,j])
-                    mtemporal3[k+k,j+j-1]=   real(Y[l][k,j])
-                    mtemporal3[j+j,k+k-1]=  -real(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k]=   real(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j]=   real(Y[l][k,j])
+                    mtemporal3[k+k,j+j-1]=  -real(Y[l][k,j])
+                    mtemporal3[j+j,k+k-1]=   real(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k]=  -real(Y[l][k,j])
 
                 end
                 WBp=mtemporal1+mtemporal
@@ -521,25 +521,25 @@ function flowbai2(l,nbus,Busnumber,Bus,Branch,Branchto,Branchfrom,out_lines,in_l
                 for i=1:a
                     j=convert(Int,(Branchto[out_lines[k]])[i])
 
-                    mtemporal1[k+k-1,j+j-1]=real(Y[l][k,j])
-                    mtemporal1[k+k,j+j]=    real(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k-1]=real(Y[l][k,j])
-                    mtemporal1[j+j,k+k]=    real(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j-1]=-real(Y[l][k,j])
+                    mtemporal1[k+k,j+j]=    -real(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k-1]=-real(Y[l][k,j])
+                    mtemporal1[j+j,k+k]=    -real(Y[l][k,j])
 
-                    mtemporal1[k+k-1,j+j]= -imag(Y[l][k,j])
-                    mtemporal1[k+k,j+j-1]=  imag(Y[l][k,j])
-                    mtemporal1[j+j,k+k-1]= -imag(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k]=  imag(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j]=  imag(Y[l][k,j])
+                    mtemporal1[k+k,j+j-1]= -imag(Y[l][k,j])
+                    mtemporal1[j+j,k+k-1]=  imag(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k]= -imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j-1]=-imag(Y[l][k,j])
-                    mtemporal3[k+k,j+j]=    -imag(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k-1]=-imag(Y[l][k,j])
-                    mtemporal3[j+j,k+k]=    -imag(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j-1]=imag(Y[l][k,j])
+                    mtemporal3[k+k,j+j]=    imag(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k-1]=imag(Y[l][k,j])
+                    mtemporal3[j+j,k+k]=    imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j]=  -real(Y[l][k,j])
-                    mtemporal3[k+k,j+j-1]=   real(Y[l][k,j])
-                    mtemporal3[j+j,k+k-1]=  -real(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k]=   real(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j]=   real(Y[l][k,j])
+                    mtemporal3[k+k,j+j-1]=  -real(Y[l][k,j])
+                    mtemporal3[j+j,k+k-1]=   real(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k]=  -real(Y[l][k,j])
 
                 end
 
@@ -548,25 +548,25 @@ function flowbai2(l,nbus,Busnumber,Bus,Branch,Branchto,Branchfrom,out_lines,in_l
                 for i=1:b
                     j=convert(Int,(Branchfrom[in_lines[k]])[i])
 
-                    mtemporal1[k+k-1,j+j-1]=real(Y[l][k,j])
-                    mtemporal1[k+k,j+j]=    real(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k-1]=real(Y[l][k,j])
-                    mtemporal1[j+j,k+k]=    real(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j-1]=-real(Y[l][k,j])
+                    mtemporal1[k+k,j+j]=    -real(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k-1]=-real(Y[l][k,j])
+                    mtemporal1[j+j,k+k]=    -real(Y[l][k,j])
 
-                    mtemporal1[k+k-1,j+j]= -imag(Y[l][k,j])
-                    mtemporal1[k+k,j+j-1]=  imag(Y[l][k,j])
-                    mtemporal1[j+j,k+k-1]= -imag(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k]=  imag(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j]= imag(Y[l][k,j])
+                    mtemporal1[k+k,j+j-1]= -imag(Y[l][k,j])
+                    mtemporal1[j+j,k+k-1]= imag(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k]= -imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j-1]=-imag(Y[l][k,j])
-                    mtemporal3[k+k,j+j]=    -imag(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k-1]=-imag(Y[l][k,j])
-                    mtemporal3[j+j,k+k]=    -imag(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j-1]=imag(Y[l][k,j])
+                    mtemporal3[k+k,j+j]=    imag(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k-1]=imag(Y[l][k,j])
+                    mtemporal3[j+j,k+k]=    imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j]=  -real(Y[l][k,j])
-                    mtemporal3[k+k,j+j-1]=   real(Y[l][k,j])
-                    mtemporal3[j+j,k+k-1]=  -real(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k]=   real(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j]=   real(Y[l][k,j])
+                    mtemporal3[k+k,j+j-1]=  -real(Y[l][k,j])
+                    mtemporal3[j+j,k+k-1]=   real(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k]=  -real(Y[l][k,j])
 
                 end
                 WBp=mtemporal1+mtemporal
@@ -787,25 +787,25 @@ function flowbai3(l,nbus,Busnumber,Bus,Branch,Branchto,Branchfrom,out_lines,in_l
                 for i=1:a
                     j=convert(Int,(Branchto[out_lines[k]])[i])
 
-                    mtemporal1[k+k-1,j+j-1]=real(Y[l][k,j])
-                    mtemporal1[k+k,j+j]=    real(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k-1]=real(Y[l][k,j])
-                    mtemporal1[j+j,k+k]=    real(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j-1]=-real(Y[l][k,j])
+                    mtemporal1[k+k,j+j]=    -real(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k-1]=-real(Y[l][k,j])
+                    mtemporal1[j+j,k+k]=    -real(Y[l][k,j])
 
-                    mtemporal1[k+k-1,j+j]= -imag(Y[l][k,j])
-                    mtemporal1[k+k,j+j-1]=  imag(Y[l][k,j])
-                    mtemporal1[j+j,k+k-1]= -imag(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k]=  imag(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j]= imag(Y[l][k,j])
+                    mtemporal1[k+k,j+j-1]= -imag(Y[l][k,j])
+                    mtemporal1[j+j,k+k-1]= imag(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k]= -imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j-1]=-imag(Y[l][k,j])
-                    mtemporal3[k+k,j+j]=    -imag(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k-1]=-imag(Y[l][k,j])
-                    mtemporal3[j+j,k+k]=    -imag(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j-1]=imag(Y[l][k,j])
+                    mtemporal3[k+k,j+j]=    imag(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k-1]=imag(Y[l][k,j])
+                    mtemporal3[j+j,k+k]=    imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j]=  -real(Y[l][k,j])
-                    mtemporal3[k+k,j+j-1]=   real(Y[l][k,j])
-                    mtemporal3[j+j,k+k-1]=  -real(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k]=   real(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j]=  real(Y[l][k,j])
+                    mtemporal3[k+k,j+j-1]=  -real(Y[l][k,j])
+                    mtemporal3[j+j,k+k-1]=  real(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k]=  -real(Y[l][k,j])
 
                 end
 
@@ -814,25 +814,25 @@ function flowbai3(l,nbus,Busnumber,Bus,Branch,Branchto,Branchfrom,out_lines,in_l
                 for i=1:b
                     j=convert(Int,(Branchfrom[in_lines[k]])[i])
 
-                    mtemporal1[k+k-1,j+j-1]= real(Y[l][k,j])
-                    mtemporal1[k+k,j+j]=     real(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k-1]= real(Y[l][k,j])
-                    mtemporal1[j+j,k+k]=     real(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j-1]= -real(Y[l][k,j])
+                    mtemporal1[k+k,j+j]=     -real(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k-1]= -real(Y[l][k,j])
+                    mtemporal1[j+j,k+k]=     -real(Y[l][k,j])
 
-                    mtemporal1[k+k-1,j+j]=  -imag(Y[l][k,j])
-                    mtemporal1[k+k,j+j-1]=   imag(Y[l][k,j])
-                    mtemporal1[j+j,k+k-1]=  -imag(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k]=   imag(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j]=  imag(Y[l][k,j])
+                    mtemporal1[k+k,j+j-1]=  -imag(Y[l][k,j])
+                    mtemporal1[j+j,k+k-1]=  imag(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k]=  -imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j-1]=-imag(Y[l][k,j])
-                    mtemporal3[k+k,j+j]=    -imag(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k-1]=-imag(Y[l][k,j])
-                    mtemporal3[j+j,k+k]=    -imag(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j-1]=imag(Y[l][k,j])
+                    mtemporal3[k+k,j+j]=    imag(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k-1]=imag(Y[l][k,j])
+                    mtemporal3[j+j,k+k]=    imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j]=  -real(Y[l][k,j])
-                    mtemporal3[k+k,j+j-1]=   real(Y[l][k,j])
-                    mtemporal3[j+j,k+k-1]=  -real(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k]=   real(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j]=  real(Y[l][k,j])
+                    mtemporal3[k+k,j+j-1]=  -real(Y[l][k,j])
+                    mtemporal3[j+j,k+k-1]=  real(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k]=  -real(Y[l][k,j])
 
                 end
                 WBp=mtemporal1+mtemporal
@@ -867,25 +867,25 @@ function flowbai3(l,nbus,Busnumber,Bus,Branch,Branchto,Branchfrom,out_lines,in_l
                 for i=1:a
                     j=convert(Int,(Branchto[out_lines[k]])[i])
 
-                    mtemporal1[k+k-1,j+j-1]=real(Y[l][k,j])
-                    mtemporal1[k+k,j+j]=    real(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k-1]=real(Y[l][k,j])
-                    mtemporal1[j+j,k+k]=    real(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j-1]=-real(Y[l][k,j])
+                    mtemporal1[k+k,j+j]=    -real(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k-1]=-real(Y[l][k,j])
+                    mtemporal1[j+j,k+k]=    -real(Y[l][k,j])
 
-                    mtemporal1[k+k-1,j+j]= -imag(Y[l][k,j])
-                    mtemporal1[k+k,j+j-1]=  imag(Y[l][k,j])
-                    mtemporal1[j+j,k+k-1]= -imag(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k]=  imag(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j]= imag(Y[l][k,j])
+                    mtemporal1[k+k,j+j-1]= -imag(Y[l][k,j])
+                    mtemporal1[j+j,k+k-1]= imag(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k]= -imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j-1]=-imag(Y[l][k,j])
-                    mtemporal3[k+k,j+j]=    -imag(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k-1]=-imag(Y[l][k,j])
-                    mtemporal3[j+j,k+k]=    -imag(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j-1]=imag(Y[l][k,j])
+                    mtemporal3[k+k,j+j]=    imag(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k-1]=imag(Y[l][k,j])
+                    mtemporal3[j+j,k+k]=    imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j]=  -real(Y[l][k,j])
-                    mtemporal3[k+k,j+j-1]=   real(Y[l][k,j])
-                    mtemporal3[j+j,k+k-1]=  -real(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k]=   real(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j]=  real(Y[l][k,j])
+                    mtemporal3[k+k,j+j-1]=  -real(Y[l][k,j])
+                    mtemporal3[j+j,k+k-1]=  real(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k]=  -real(Y[l][k,j])
 
                 end
 
@@ -894,25 +894,25 @@ function flowbai3(l,nbus,Busnumber,Bus,Branch,Branchto,Branchfrom,out_lines,in_l
                 for i=1:b
                     j=convert(Int,(Branchfrom[in_lines[k]])[i])
 
-                    mtemporal1[k+k-1,j+j-1]=real(Y[l][k,j])
-                    mtemporal1[k+k,j+j]=    real(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k-1]=real(Y[l][k,j])
-                    mtemporal1[j+j,k+k]=    real(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j-1]=-real(Y[l][k,j])
+                    mtemporal1[k+k,j+j]=    -real(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k-1]=-real(Y[l][k,j])
+                    mtemporal1[j+j,k+k]=    -real(Y[l][k,j])
 
-                    mtemporal1[k+k-1,j+j]= -imag(Y[l][k,j])
-                    mtemporal1[k+k,j+j-1]=  imag(Y[l][k,j])
-                    mtemporal1[j+j,k+k-1]= -imag(Y[l][k,j])
-                    mtemporal1[j+j-1,k+k]=  imag(Y[l][k,j])
+                    mtemporal1[k+k-1,j+j]= imag(Y[l][k,j])
+                    mtemporal1[k+k,j+j-1]= -imag(Y[l][k,j])
+                    mtemporal1[j+j,k+k-1]= imag(Y[l][k,j])
+                    mtemporal1[j+j-1,k+k]= -imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j-1]=-imag(Y[l][k,j])
-                    mtemporal3[k+k,j+j]=    -imag(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k-1]=-imag(Y[l][k,j])
-                    mtemporal3[j+j,k+k]=    -imag(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j-1]=imag(Y[l][k,j])
+                    mtemporal3[k+k,j+j]=    imag(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k-1]=imag(Y[l][k,j])
+                    mtemporal3[j+j,k+k]=    imag(Y[l][k,j])
 
-                    mtemporal3[k+k-1,j+j]=  -real(Y[l][k,j])
-                    mtemporal3[k+k,j+j-1]=   real(Y[l][k,j])
-                    mtemporal3[j+j,k+k-1]=  -real(Y[l][k,j])
-                    mtemporal3[j+j-1,k+k]=   real(Y[l][k,j])
+                    mtemporal3[k+k-1,j+j]=  real(Y[l][k,j])
+                    mtemporal3[k+k,j+j-1]=  -real(Y[l][k,j])
+                    mtemporal3[j+j,k+k-1]=  real(Y[l][k,j])
+                    mtemporal3[j+j-1,k+k]=  -real(Y[l][k,j])
 
                 end
                 WBp=mtemporal1+mtemporal
@@ -1003,7 +1003,7 @@ function flowbai3(l,nbus,Busnumber,Bus,Branch,Branchto,Branchfrom,out_lines,in_l
 
         return(x,LD,Matrixrank,A,autovalores,autovalormax,FO)
 end
-
+#
 for l=1:ncomb
 X[l] = flowbai3(l,nbus,Busnumber,Bus,Branch,Branchto,Branchfrom,out_lines,in_lines,Y,nstep)
 println("------------------------------------------------ Ok ------------------------------------------------\n")
