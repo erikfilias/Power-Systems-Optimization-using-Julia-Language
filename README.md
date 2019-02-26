@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="460" height="300" src="https://github.com/erikfilias/Power-Systems-Optimization-using-Julia-Language/blob/master/assets/LogoGit.png">
+  <img width="230" height="150" src="https://github.com/erikfilias/Power-Systems-Optimization-using-Julia-Language/blob/master/assets/LogoGit.png">
 </p>
 ### Welcome to AC Power Flow Models with Julia Language
 
