@@ -1,4 +1,4 @@
-![Image](https://github.com/erikfilias/Power-Systems-Optimization-using-Julia-Language/blob/master/assets/LogoGit3.png)
+![Image](https://github.com/erikfilias/Power-Systems-Optimization-using-Julia-Language/blob/master/assets/LogoGit.png)
 
 ### Welcome to AC Power Flow Models with Julia Language
 
