@@ -1,5 +1,6 @@
-![Image](https://github.com/erikfilias/Power-Systems-Optimization-using-Julia-Language/blob/master/assets/LogoGit.png)
-
+<p align="center">
+  <img width="460" height="300" src="https://github.com/erikfilias/Power-Systems-Optimization-using-Julia-Language/blob/master/assets/LogoGit.png">
+</p>
 ### Welcome to AC Power Flow Models with Julia Language
 
 This repository aims to share our advances in AC Power Flow Models that are driven to solve Power Systems Optimization Problems. All of the codes were made in [Julia Language v1.0](https://julialang.org/) using its optimization package [JuMP](http://www.juliaopt.org/JuMP.jl/dev/quickstart/).
