@@ -26,30 +26,34 @@ println("Declared SD variables : Ok \n")
 
 println("Declared SD constraint : Ok \n")
 #-------------------------------------------------------------------------------
-cte=[0.04302926	20	0;
-0.25	40	0;
-0.01	40	0;
-0.01	40	0;
-0.01	40	0]
+#Extra Data
 
-#Datos para 14 Barras
-Vmin=[0.95 0.95 0.95 0.95 0.95 0.95 0.95 0.95 0.95 0.95 0.95 0.95 0.95 0.95]
-Vmax=[1.10 1.10 1.10 1.10 1.10 1.10 1.10 1.10 1.10 1.10 1.10 1.10 1.10 1.10]
-Pmax=[2.5 0.4 0 0 0 0 0 0 0 0 0 0 0 0]
-Pmin=[0 0.4 0 0 0 0 0 0 0 0 0 0 0 0]
-Qmax=[0 1 1 0 0 1 0 1 0 0 0 0 0 0]
-Qmin=[-1 0 0 0 0 0 0 0 0 0 0 0 0 0]
+# cte=[0.04302926	20	0;
+# 0.25	40	0;
+# 0.01	40	0;
+# 0.01	40	0;
+# 0.01	40	0]
+#
+# #Datos para 14 Barras
+# Vmin=[0.95 0.95 0.95 0.95 0.95 0.95 0.95 0.95 0.95 0.95 0.95 0.95 0.95 0.95]
+# Vmax=[1.10 1.10 1.10 1.10 1.10 1.10 1.10 1.10 1.10 1.10 1.10 1.10 1.10 1.10]
+# Pmax=[2.5 0.4 0 0 0 0 0 0 0 0 0 0 0 0]
+# Pmin=[0 0.4 0 0 0 0 0 0 0 0 0 0 0 0]
+# Qmax=[0 1 1 0 0 1 0 1 0 0 0 0 0 0]
+# Qmin=[-1 0 0 0 0 0 0 0 0 0 0 0 0 0]
 
-Wg0=zeros(2*ngen,2*ngen)
-for i=1:ngen
-    Wg0[i+i-1,i+i-1]=cte[i,1]
-    Wg0[i+i,i+i]=cte[i,3]
-    Wg0[i+i-1,i+i]=0.5*cte[i,2]
-    Wg0[i+i,i+i-1]=0.5*cte[i,2]
-end
 
-# @objective(m,Min, vecdot(Wg0,x1))
-@objective(m,Min,x1[1,2])
+# Wg0=zeros(2*ngen,2*ngen)
+# for i=1:ngen
+#     Wg0[i+i-1,i+i-1]=cte[i,1]
+#     Wg0[i+i,i+i]=cte[i,3]
+#     Wg0[i+i-1,i+i]=0.5*cte[i,2]
+#     Wg0[i+i,i+i-1]=0.5*cte[i,2]
+# end
+
+# @objective(m,Min, vecdot(Wg0,x1))#Objective function for OPF
+# ------------------------------------------------------------------------------
+@objective(m,Min,x1[1,2]) #Objective Function of Power Flow
 println("Declared Objetive Function : Ok \n")
 
 # Creation of Ybus to create a funtion Ybus
@@ -95,7 +99,6 @@ generador=0
 
 for k=1:nbus
     if Bus.bustype[k] !=0
-        #Encerar matrices
 
         mtemporal=  zeros(2*nbus,2*nbus)
         mtemporal1= zeros(2*nbus,2*nbus)
@@ -275,14 +278,14 @@ g=0
 for k=1:nbus
     if Bus.bustype[k] !=0
         g+=1
-    # @constraint(m,x1[g+g-1,g+g]+x2[g+g-1,g+g-1]==Bus.Pmax[k])
-    # @constraint(m,x1[g+g-1,g+g]-x2[g+g,g+g]==Bus.Pmin[k])
-    # @constraint(m,x3[g+g-1,g+g]+x4[g+g-1,g+g-1]==Bus.Qmax[k])
-    # @constraint(m,x3[g+g-1,g+g]-x4[g+g,g+g]==Bus.Qmin[k])
-    @constraint(m,x1[g+g-1,g+g]+x2[g+g-1,g+g-1]==Pmax[k])
-    @constraint(m,x1[g+g-1,g+g]-x2[g+g,g+g]==Pmin[k])
-    @constraint(m,x3[g+g-1,g+g]+x4[g+g-1,g+g-1]==Qmax[k])
-    @constraint(m,x3[g+g-1,g+g]-x4[g+g,g+g]==Qmin[k])
+    @constraint(m,x1[g+g-1,g+g]+x2[g+g-1,g+g-1]==Bus.Pmax[k])
+    @constraint(m,x1[g+g-1,g+g]-x2[g+g,g+g]==Bus.Pmin[k])
+    @constraint(m,x3[g+g-1,g+g]+x4[g+g-1,g+g-1]==Bus.Qmax[k])
+    @constraint(m,x3[g+g-1,g+g]-x4[g+g,g+g]==Bus.Qmin[k])
+    # @constraint(m,x1[g+g-1,g+g]+x2[g+g-1,g+g-1]==Pmax[k])
+    # @constraint(m,x1[g+g-1,g+g]-x2[g+g,g+g]==Pmin[k])
+    # @constraint(m,x3[g+g-1,g+g]+x4[g+g-1,g+g-1]==Qmax[k])
+    # @constraint(m,x3[g+g-1,g+g]-x4[g+g,g+g]==Qmin[k])
     end
     if Bus.bustype[k] ==2
     @constraint(m,x1[g+g-1,g+g-1]==Bus.Pg0[k]^2)

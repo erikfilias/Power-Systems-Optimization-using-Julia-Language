@@ -9,7 +9,7 @@ include("Flow_General_data.jl")
 
 #SETTING THE SOLVER
 solver = MosekSolver()
-#INCLUDE MODEL
+# #INCLUDE MODEL
 include("Flow_Bai_model.jl")
 #INCLUDE PRINT
 # EXPORTDATA = 1  # 1 == EXPORT; 0 == NO EXPORT (.mat)
