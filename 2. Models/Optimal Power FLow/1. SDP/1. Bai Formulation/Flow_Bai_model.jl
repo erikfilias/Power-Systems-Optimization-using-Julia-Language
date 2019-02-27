@@ -57,11 +57,12 @@ Branchz=Branch.r+Branch.x*im
 Branchy=1 ./Branchz
 Y=zeros(nbus,nbus)
 Y=complex(Y)
-
+# Elements outside the diagonal of Ybus
 for k=1:nbranch
     Y[convert(Int, Branchfrom[k]),convert(Int, Branchto[k])] = Y[convert(Int, Branchfrom[k]),convert(Int, Branchto[k])]+Branchy[k]*Branch.a[k]
     Y[convert(Int, Branchto[k]),convert(Int, Branchfrom[k])] = Y[convert(Int, Branchfrom[k]),convert(Int, Branchto[k])]
 end
+# Elements inside the diagonal of Ybus
 for i=1:nbus
     for j=1:nbranch
         if Branchfrom[j]==i
