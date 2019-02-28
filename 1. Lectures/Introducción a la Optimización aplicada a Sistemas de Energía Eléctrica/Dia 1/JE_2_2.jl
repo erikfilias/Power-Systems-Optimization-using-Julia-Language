@@ -8,14 +8,13 @@ using JuMP, GLPK, Printf
 # Model & Solver
 m = Model(with_optimizer(GLPK.Optimizer))
 # Variables
-@variable(m, 0 <= x )
-@variable(m, 0 <= y )
+@variable(m, 0 <= x <= 10)
+@variable(m, 0 <= y <=  5)
 # Objective
-@objective(m, Min, 11x + 9y )
+@objective(m, Max, 10x + 8y )
 # Constraints
-@constraint(m, 1000000 <= (0.40)x + (0.32)y )
-@constraint(m,  400000 <= (0.20)x + (0.40)y )
-@constraint(m,  250000 <= (0.35)x + (0.20)y )
+@constraint(m,  4.5x + 1.5y <= 30 )
+@constraint(m,  6x + 3y <= 48)
 # Print Model
 print(m)
 
@@ -26,6 +25,6 @@ status = termination_status(m)
 @printf "-----------------------------------------RESULTS--------------------------------------\n"
 @printf "--------------------------------------------------------------------------------------\n"
 println("Status of the Optimization: ", status)
-println("Costo: ", JuMP.objective_value(m))
-println("Petroleo crudo ligero = ", JuMP.value(x))
-println("Petroleo crudo pesado = ", JuMP.value(y))
+println("Utilidad: ", JuMP.objective_value(m))
+println("Mesas  = ", JuMP.value(x))
+println("Sillas = ", JuMP.value(y))
