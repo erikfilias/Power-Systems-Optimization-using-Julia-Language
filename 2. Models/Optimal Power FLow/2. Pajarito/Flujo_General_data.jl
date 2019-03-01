@@ -1,14 +1,19 @@
 #DATA READING
-branch=readdlm("$system_name.branchdata.csv",';')
-bus=readdlm("$system_name.busdata.csv",';')
-
+branch = CSV.read("branchdata_$system_name.csv"; delim=',')
+bus = CSV.read("busdata_$system_name.csv"; delim=',')
+# branch=readdlm("branchdata_$system_name.csv",';')
+# bus=readdlm("busdata_$system_name.csv",';')
+using Printf
+using CSV
+using LinearAlgebra
 #SYSTEM PARAMETERS
-Sbase=bus[1,4]
+# Sbase=bus[1,4]
+Sbase = 100
 Vbase=1.00
 nbus=size(bus,1)-3
 nbranch=size(branch,1)-2
 # DEFINE PARAMETERS DE NODOS
-type DATA1
+mutable struct DATA1
  	busnum
  	bustype
  	V0
@@ -26,7 +31,7 @@ type DATA1
 	Pmin
 end
 # DEFINE PARAMETERS DE LINEAS
-type DATA2
+mutable struct DATA2
 	branchnum
 	from
 	to
@@ -50,7 +55,14 @@ branch[3:nbranch+2,8], branch[3:nbranch+2,9], branch[3:nbranch+2,15],branch[3:nb
 branch[3:nbranch+2,22],zeros(Float64,1,nbranch), zeros(Float64,1,nbranch),zeros(Float64,1,nbranch),branch[3:nbranch+2,17],branch[3:nbranch+2,18])
 
 #CALCULATE PARAMETERS
-Bus.Pd = Bus.Pd / Sbase
+for i in 1:3
+	# Bus.busLoc[i] = i
+	Bus.Pd[i] = Bus.Pd[i]/(Sbase)
+	# Bus.Qd[i] /= Sbase
+	# Bus.Pg0[i] /= Sbase
+	# Bus.Qg0[i] /= Sbase
+end
+# Bus.Pd ./=(Sbase)
 Bus.Qd = Bus.Qd / Sbase
 Bus.Pg0 =Bus.Pg0 / Sbase
 Bus.Qg0 = Bus.Qg0 / Sbase
