@@ -1,7 +1,5 @@
 clearconsole()
 using JuMP, GLPK, Printf
-using Interact
-using Plots
 
 # Define some input data about the test system
 # Maximum power output of generators
@@ -11,7 +9,7 @@ const GENERATION_MIN = [0, 300]
 # Incremental cost of generators
 const COST_GENERATION = [50, 100]
 # Incremental cost of wind generators
-const COST_WIND = 50
+const COST_WIND = 10
 # Total demand
 const DEMAND = 1500
 # Wind forecast
@@ -28,20 +26,6 @@ function solve_economic_dispatch(;
         cost_of_wind = COST_WIND)
 
     economic_dispatch = Model(with_optimizer(GLPK.Optimizer))
-
-    # Define decision variables
-    # @variables(economic_dispatch, begin
-    #     g[i=1:2]  # Thermal generation (MW).
-    #     w >= 0  # Wind power (MW).
-    # end)
-    # g = Dict()
-    # w = Dict()
-    # for i in 1:2
-    # 	@variable(economic_dispatch, g[i])
-    # end
-    # for i in 1:1
-    # 	@variable(economic_dispatch, w[i] >= 0)
-    # end
     g = @variable(economic_dispatch, [1:2])
     @variable(economic_dispatch, w >= 0)
 
@@ -98,48 +82,8 @@ println("Status of the Optimization: ", solution.status)
 
 # for i in 1:2
 println("   Generator[",1,"]: ", solution.generator1, " MW")
-println("   Generator[2]: ", solution.generator2, " MW")
+println("   Generator[",2,"]: ", solution.generator2, " MW")
 println("         Wind  : ", solution.wind_generation, " MW")
 println("Wind spillage  : ", solution.wind_spillage, " MW")
 println("----------------------------------")
 println("Total cost: \$", solution.cost)
-
-
-@manipulate for cost_of_wind in COST_WIND .* (1:0.1:3.5)
-    solutions = Any[]
-    cost_of_g1 = COST_GENERATION[1] .* (0.5:0.01:3.0)
-    for c_g1 in cost_of_g1
-        # update the incremental cost of the first generator at every iteration
-        solution = solve_economic_dispatch(
-            cost_of_thermal = [c_g1, COST_GENERATION[2]],
-            cost_of_wind = cost_of_wind
-        )
-        push!(solutions, solution)
-    end
-
-    # Plot the outputs
-    plot(
-        # Plot the total cost
-        plot(cost_of_g1, [sol.cost for sol in solutions],
-            ylabel = "Total cost",
-            ylims = (50000, 200000)
-        ),
-        # Plot the power output of Generator 1
-        plot(cost_of_g1, [sol.generator1 for sol in solutions],
-            ylabel = "Dispatch: G1",
-            ylims = (0, 1100)
-        ),
-        # Plot the power output of Generator 2
-        plot(cost_of_g1, [sol.generator2 for sol in solutions],
-            ylabel = "Dispatch: G2",
-            ylims = (0, 1600)
-        ),
-        # Plot the wind power output
-        plot(cost_of_g1, [sol.wind_generation for sol in solutions],
-            ylabel = "Dispatch: Wind",
-            ylims = (0, 250)
-        ),
-        legend = false,
-        xlabel = "Cost of G1"
-    )
-end
