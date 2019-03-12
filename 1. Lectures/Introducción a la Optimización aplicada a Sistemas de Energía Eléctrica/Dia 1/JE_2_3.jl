@@ -50,17 +50,6 @@ function solve_economic_dispatch(;
     # Solve statement
     JuMP.optimize!(economic_dispatch)
 
-
-    # Return the optimal value of the objective function and its minimizers
-    # as a NamedTuple.
-    # gen = zeros(2)
-    # wind_generation = zeros(2)
-    # for i in 1:2
-    #     gen[i] = value(g[i])
-    #     wind_generation[i] = value(w)
-    # end
-    #
-    # return (gen, wind_generation)
     return (
         generator1 = value(g[1]),
         generator2 = value(g[2]),
@@ -78,9 +67,6 @@ solution = solve_economic_dispatch()
 @printf "------------------------------------Results--Dispatch---------------------------------\n"
 @printf "--------------------------------------------------------------------------------------\n"
 println("Status of the Optimization: ", solution.status)
-
-
-# for i in 1:2
 println("   Generator[",1,"]: ", solution.generator1, " MW")
 println("   Generator[",2,"]: ", solution.generator2, " MW")
 println("         Wind  : ", solution.wind_generation, " MW")
