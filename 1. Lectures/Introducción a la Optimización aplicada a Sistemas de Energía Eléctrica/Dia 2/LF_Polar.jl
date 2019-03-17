@@ -4,7 +4,7 @@ using JuMP, Ipopt, Printf, LinearAlgebra
 # Modelo
 m = Model(with_optimizer(Ipopt.Optimizer))
 
-system_name = "IEEE3"
+system_name = "IEEE30"
 
 # Adquisition DATA
 include("SMC_dat.jl")
@@ -75,7 +75,7 @@ for i in 1:nbus
         @constraint(m, Qg[i] == Bus.Qg0[i])
     end
     if Bus.bustype[i] != 0
-        @constraint(m, V[i] == Bus.V0[i])
+        @constraint(m, V[i] == Bus.Vgen[i])
     end
     if Bus.bustype[i] == 3
         @constraint(m, th[i] == Bus.Th0[i]*3.14159265359/180)

@@ -61,6 +61,7 @@ mutable struct DATA1
 	gshb
 	bshb
 	n0
+	Vgen
 	scost
 	busLoc
 end
@@ -132,7 +133,7 @@ mutable struct DATA5
 	Prob
 end
 #
-Bus=DATA1(bus[:,2], bus[:,6], bus[:,3],	bus[:,7], bus[:,8], bus[:,9], bus[:,10], bus[:,11], bus[:,12], bus[:,17], bus[:,18], bus[:,19], bus[:,21], bus[:,1])
+Bus=DATA1(bus[:,2], bus[:,6], bus[:,3],	bus[:,7], bus[:,8], bus[:,9], bus[:,10], bus[:,11], bus[:,12], bus[:,17], bus[:,18], bus[:,19], bus[:,14],bus[:,21], bus[:,1])
 Branch=DATA2(branch[:,1], branch[:,2], branch[:,3],
 	branch[:,8], branch[:,9], branch[:,10], branch[:,16], branch[:,17], branch[:,23],
 	branch[:,7], branch[:,12], branch[:,18], branch[:,19], branch[:,6], branch[:,1], databranchcusto[:,1], databranchcusto[:,2], databranchcusto[:,3])
