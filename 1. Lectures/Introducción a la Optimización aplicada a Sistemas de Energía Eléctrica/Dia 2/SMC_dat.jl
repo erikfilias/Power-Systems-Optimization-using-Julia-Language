@@ -145,12 +145,12 @@ Wgen=DATA4(wgen[:,1], wgen[:,2], wgen[:,3],	wgen[:,4], wgen[:,5], wgen[:,6], wge
 		wgen[:,10], wgen[:,11], wgen[:,12], wgen[:,13], wgen[:,14])
 Scen=DATA5(scen[:,1], scen[:,2], scen[:,3],	scen[:,4], scen[:,5])
 #
-#calculated parameters
-# for i in 1:nbranch
-# 	if Branch.r[i] == 0
-# 		Branch.r[i] = 1e-6
-# 	end
-# end
+# calculated parameters
+for i in 1:nbranch
+	if Branch.r[i] == 0
+		Branch.r[i] = 1e-6
+	end
+end
 
 for i in 1:nbus
 	Bus.busLoc[i] = i
