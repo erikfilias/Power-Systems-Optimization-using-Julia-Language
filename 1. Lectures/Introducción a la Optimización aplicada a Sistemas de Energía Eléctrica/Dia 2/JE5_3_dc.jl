@@ -94,9 +94,9 @@ for i in 1:nbus
 	#if Bus.bustype[i] == 0
 	#	@constraint(m, Qg[i] == Bus.Qg0[i])
 	#end
-	if Bus.bustype[i] != 0
-		@constraint(m, V[i] == Bus.V0[i])
-	end
+	#if Bus.bustype[i] != 0
+	#	@constraint(m, V[i] == Bus.V0[i])
+	#end
 	if Bus.bustype[i] == 3
 		@constraint(m, th[i] == Bus.Th0[i]*3.14159/180)
 	end
