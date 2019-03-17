@@ -5,49 +5,50 @@ using JuMP, Ipopt, Printf, LinearAlgebra
 @printf "-----------------------------------------GENESIS--------------------------------------\n"
 @printf "--------------------------------------------------------------------------------------\n"
 # Model & Solver
+# solver = IpoptSolver()
+# m = Model(solver = solver)
 m = Model(with_optimizer(Ipopt.Optimizer))
 
 Vnom= 1.00
 
 # Sistema a Simular
-system_name = "IEEE3"
+system_name = "IEEE14"
 
 # Adquisition DATA
 include("SMC_dat.jl")
 
 # Variables
-@variable(m, V[Bus.busnum] >= 0)
+@variable(m, V[Bus.busnum])
+@variable(m, th[Bus.busnum])
+@variable(m, Pg[Bus.busnum])
+@variable(m, Qg[Bus.busnum])
+
 for i in 1:nbus
     set_start_value(V[i], Bus.V0[i])
-end
-@variable(m, th[Bus.busnum])
-for i in 1:nbus
-    set_start_value(th[i], Bus.Th0[i]*3.14159/180)
+	set_start_value(th[i], Bus.Th0[i]*3.14159/180)
+	set_start_value(Pg[i], Bus.Pg0[i])
+	set_start_value(Qg[i], Bus.Qg0[i])
+	# setvalue(V[i], Bus.V0[i])
+	# setvalue(th[i], Bus.Th0[i]*3.14159/180)
+	# setvalue(Pg[i], Bus.Pg0[i])
+	# setvalue(Qg[i], Bus.Qg0[i])
 end
 @variable(m, Pde[Branch.branchnum])
-for i in 1:nbranch
-	set_start_value(Pde[i], 0)
-end
 @variable(m, Qde[Branch.branchnum])
-for i in 1:nbranch
-	set_start_value(Qde[i], 0)
-end
 @variable(m, Ppara[Branch.branchnum])
+@variable(m, Qpara[Branch.branchnum])
+
 for i in 1:nbranch
 	set_start_value(Pde[i], 0)
-end
-@variable(m, Qpara[Branch.branchnum])
-for i in 1:nbranch
 	set_start_value(Qde[i], 0)
+	set_start_value(Ppara[i], 0)
+	set_start_value(Qpara[i], 0)
+	# setvalue(Pde[i], 0)
+	# setvalue(Qde[i], 0)
+	# setvalue(Ppara[i], 0)
+	# setvalue(Qpara[i], 0)
 end
-@variable(m, Pg[Bus.busnum])
-for i in 1:nbus
-   	set_start_value(Pg[i], Bus.Pg0[i])
-end
-@variable(m, Qg[Bus.busnum])
-for i in 1:nbus
-   	set_start_value(Qg[i], Bus.Qg0[i])
-end
+
 #@show Vsqr
 #@show th
 #@show Isqr
@@ -57,11 +58,12 @@ end
 #@show Qg
 @printf "-----------------------------------------------------------------------------------------\n"
 @printf "                                                                                         \n"
-@objective(m, Min, sum(Pg[i] for i=1:nbus if Bus.bustype[i] == 3))
+# @objective(m, Min, sum(Pg[i] for i=1:nbus if Bus.bustype[i] == 3))
+@objective(m, Min, sum(1e6*(Pde[i]+Ppara[i]) for i=1:nbranch))
 #end
 for k in 1:nbus
 	#P_balance_rule
-	@NLconstraint(m, Pg[k] - Bus.Pd[k] + V[k]^2*Bus.gshb[k]
+	@NLconstraint(m, Pg[k] - Bus.Pd[k]
 	 -	sum(Ppara[i] for i in in_lines[k])
 	 -	sum(Pde[i]  for i in out_lines[k]) == 0)
 	#Q_balance_rule
@@ -102,7 +104,7 @@ for i in 1:nbus
 		@constraint(m, Qg[i] == Bus.Qg0[i])
 	end
 	if Bus.bustype[i] != 0
-		@constraint(m, V[i] == Bus.Vgen[i])
+		@constraint(m, V[i] == Bus.V0[i])
 	end
 	if Bus.bustype[i] == 3
 		@constraint(m, th[i] == Bus.Th0[i]*3.14159/180)
@@ -116,12 +118,14 @@ print(m)
 # Initialization of the optimization
 JuMP.optimize!(m)
 status = termination_status(m)
+# status = solve(m)
 @printf "--------------------------------------------------------------------------------------\n"
 @printf "-----------------------------------------RESULTS--------------------------------------\n"
 @printf "--------------------------------------------------------------------------------------\n"
 println("Status of the Optimization: ", status)
 
 println("Objective value: ", JuMP.objective_value(m)*Sbase)
+# println("Objective value: ", getobjectivevalue(m)*Sbase/1e6)
 @printf "---------------------------------------------------------------------------------------------\n"
 @printf "                                         BUS__RESULTS                                        \n"
 @printf "---------------------------------------------------------------------------------------------\n"
