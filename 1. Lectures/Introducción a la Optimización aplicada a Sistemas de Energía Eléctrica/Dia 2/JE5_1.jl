@@ -26,22 +26,30 @@ for i in 1:nbus
     	setvalue(th[i], 0)
     end
 end
-@variable(m, P[Branch.branchnum])
+@variable(m, Pde[Branch.branchnum])
 for i in 1:nbranch
-	setvalue(P[i], 0)
+	setvalue(Pde[i], 0)
 end
-@variable(m, Q[Branch.branchnum])
+@variable(m, Qde[Branch.branchnum])
 for i in 1:nbranch
-	setvalue(Q[i], 0)
+	setvalue(Qde[i], 0)
+end
+@variable(m, Ppara[Branch.branchnum])
+for i in 1:nbranch
+	setvalue(Pde[i], 0)
+end
+@variable(m, Qpara[Branch.branchnum])
+for i in 1:nbranch
+	setvalue(Qde[i], 0)
 end
 @variable(m, Pg[Bus.busnum])
-#for i in 1:nbus
-#    if Bus.bustype[i] == 3
-#    	setvalue(Pg[i], 0)
-#    else
-#    	setvalue(Pg[i], Bus.Pg0[i])
-#    end
-#end
+for i in 1:nbus
+   if Bus.bustype[i] == 3
+   	setvalue(Pg[i], 0)
+   else
+   	setvalue(Pg[i], Bus.Pg0[i])
+   end
+end
 @variable(m, Qg[Bus.busnum])
 
 #@show Vsqr
@@ -53,20 +61,16 @@ end
 #@show Qg
 @printf "-----------------------------------------------------------------------------------------\n"
 @printf "                                                                                         \n"
-@objective(m, Min, sum(Branch.r[i]*Isqr[i] for i=1:nbranch))
+@objective(m, Min, sum(Pg[i] for i=1:ncgen if Bus.bustype[Cgen.bus[i]] == 3))
 #end
 for k in 1:nbus
 	#P_balance_rule
 	@constraint(m, Pg[k] - Bus.Pd[k] + Vsqr[k]*Bus.gshb[k] +
-	#	sum{P[j,i], j in out_lines[k], i in in_lines[k]} -
 		sum(P[i] for i in in_lines[k]) -
-	#	sum{P[i,j] + Bus.r[i]*Isqr[i,j], i in out_lines[k], j in out_lines[k]} == 0 )
 		sum(P[i] + Branch.r[i] * Isqr[i] for i in out_lines[k]) == 0)
 	#Q_balance_rule
 	@constraint(m, Qg[k] - Bus.Qd[k] + Vsqr[k]*Bus.bshb[k] +
-	#	sum{P[j,i], j in out_lines[k], i in in_lines[k]} -
 		sum(Q[i] + Branch.c[i] * Vsqr[k] for i in in_lines[k]) -
-	#	sum{P[i,j] + Bus.r[i]*Isqr[i,j], i in out_lines[k], j in out_lines[k]} == 0 )
 		sum(Q[i] - Branch.c[i] * Vsqr[k] + Branch.x[i] * Isqr[i] for i in out_lines[k]) == 0)
 end
 
