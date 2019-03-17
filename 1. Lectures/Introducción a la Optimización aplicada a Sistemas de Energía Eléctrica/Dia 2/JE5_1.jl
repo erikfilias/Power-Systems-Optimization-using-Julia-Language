@@ -7,14 +7,17 @@ using JuMP, Ipopt, Printf
 # Model & Solver
 m = Model(with_optimizer(Ipopt.Optimizer))
 
-# Adquisition DATA
+# Sistema a Simular
+system_name = "IEEE14"
 
+# Adquisition DATA
+include("SMC_dat.jl")
 
 # Variables
-@variable(m, Vsqr[Bus.busnum] >= 0)
+@variable(m, V[Bus.busnum] >= 0)
 for i in 1:nbus
     if Bus.bustype[i] == 0
-    	setvalue(Vsqr[i], Vnom^2)
+    	setvalue(V[i], Vnom)
     end
 end
 @variable(m, th[Bus.busnum])
@@ -22,10 +25,6 @@ for i in 1:nbus
     if Bus.bustype[i] != 3
     	setvalue(th[i], 0)
     end
-end
-@variable(m, Isqr[Branch.branchnum] >= 0)
-for i in 1:nbranch
-	setvalue(Isqr[i], 0)
 end
 @variable(m, P[Branch.branchnum])
 for i in 1:nbranch

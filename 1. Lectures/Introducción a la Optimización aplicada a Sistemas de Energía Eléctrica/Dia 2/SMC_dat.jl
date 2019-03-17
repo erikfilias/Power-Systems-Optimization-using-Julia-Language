@@ -18,7 +18,7 @@ Sbase = 100
 IData = 1
 
 
-system_name = "IEEE14"
+# system_name = "IEEE14"
 
 
 using Printf
