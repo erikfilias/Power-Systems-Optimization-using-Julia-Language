@@ -1,5 +1,5 @@
 clearconsole()
-using JuMP, Ipopt, Printf
+using JuMP, Ipopt, Printf, LinearAlgebra
 
 @printf "--------------------------------------------------------------------------------------\n"
 @printf "-----------------------------------------GENESIS--------------------------------------\n"
@@ -7,7 +7,7 @@ using JuMP, Ipopt, Printf
 # Model & Solver
 m = Model(with_optimizer(Ipopt.Optimizer))
 
-Vnom= 1
+Vnom= 1.00
 
 # Sistema a Simular
 system_name = "IEEE14"
@@ -104,9 +104,9 @@ for i in 1:nbus
 	if Bus.bustype[i] != 3
 		@constraint(m, Pg[i] == Bus.Pg0[i])
 	end
-	if Bus.bustype[i] == 0
-		@constraint(m, Qg[i] == Bus.Qg0[i])
-	end
+	# if Bus.bustype[i] == 0
+	# 	@constraint(m, Qg[i] == Bus.Qg0[i])
+	# end
 	if Bus.bustype[i] != 0
 		@constraint(m, V[i] == Bus.V0[i])
 	end
@@ -157,26 +157,26 @@ end
 # d=0
 # e=0
 # f=0
-for i in 1:nbus
-	global a
-	global b
-	global c
-	global d
-	global e
-	global f
-    a = a + value(Pg[i])
-    b = b + value(Qg[i])
-    c = c + Bus.Pd[i]
-    d = d + Bus.Qd[i]
-    e = e + Bus.gshb[i]*(value(V[i]))^2
-    f = f + Bus.bshb[i]*(value(V[i]))^2
-end
-@printf "%35.4f" float(Sbase*a)
-@printf "%10.4f" float(Sbase*b)
-@printf "%10.4f" float(Sbase*c)
-@printf "%10.4f" float(Sbase*d)
-@printf "%10.4f" float(Sbase*e)
-@printf "%10.4f" float(Sbase*f)
+# for i in 1:nbus
+# 	global a
+# 	global b
+# 	global c
+# 	global d
+# 	global e
+# 	global f
+#     a = a + value(Pg[i])
+#     b = b + value(Qg[i])
+#     c = c + Bus.Pd[i]
+#     d = d + Bus.Qd[i]
+#     e = e + Bus.gshb[i]*(value(V[i]))^2
+#     f = f + Bus.bshb[i]*(value(V[i]))^2
+# end
+@printf "%35.4f" float(Sbase*sum(value(Pg[i]) for i in 1:nbus))
+@printf "%10.4f" float(Sbase*sum(value(Qg[i]) for i in 1:nbus))
+@printf "%10.4f" float(Sbase*sum(Bus.Pd[i] for i in 1:nbus))
+@printf "%10.4f" float(Sbase*sum(Bus.Qd[i] for i in 1:nbus))
+@printf "%10.4f" float(Sbase*sum(Bus.gshb[i]*(value(V[i]))^2 for i in 1:nbus))
+@printf "%10.4f" float(Sbase*sum(Bus.bshb[i]*(value(V[i]))^2 for i in 1:nbus))
 @printf "\n"
 @printf "---------------------------------------------------------------------------------------------\n"
 
@@ -203,20 +203,20 @@ end
 @printf "TOTAL"
 # a = 0
 # b = 0
-for k in 1:nbus
-	global a
-	global b
-    for l in 1:nbus
-        for i in 1:nbranch
-            if k == Branch.from[i]
-                if l == Branch.to[i]
-                    a = a + (value(Pde[i])+value(Ppara[i]))
-                    b = b + (value(Qde[i])+value(Qpara[i]))
-                end
-            end
-        end
-    end
-end
-@printf "%60.4f" float(Sbase*a)
-@printf "%10.4f" float(Sbase*b)
+# for k in 1:nbus
+# 	global a
+# 	global b
+#     for l in 1:nbus
+#         for i in 1:nbranch
+#             if k == Branch.from[i]
+#                 if l == Branch.to[i]
+#                     a = a + (value(Pde[i])+value(Ppara[i]))
+#                     b = b + (value(Qde[i])+value(Qpara[i]))
+#                 end
+#             end
+#         end
+#     end
+# end
+@printf "%60.4f" float(Sbase*sum((value(Pde[i])+value(Ppara[i])) for i in 1:nbranch))
+@printf "%10.4f" float(Sbase*sum((value(Qde[i])+value(Qpara[i])) for i in 1:nbranch))
 @printf "\n"
