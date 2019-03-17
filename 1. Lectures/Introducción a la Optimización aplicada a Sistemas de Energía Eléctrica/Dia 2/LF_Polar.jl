@@ -1,0 +1,156 @@
+clearconsole()
+using JuMP, Ipopt, Printf, LinearAlgebra
+
+# Modelo
+m = Model(with_optimizer(Ipopt.Optimizer))
+
+system_name = "IEEE3"
+
+# Adquisition DATA
+include("SMC_dat.jl")
+
+# Variables
+@variable(m, V[Bus.busnum] >= 0)
+@variable(m, th[Bus.busnum])
+@variable(m, Pg[Bus.busnum])
+@variable(m, Qg[Bus.busnum])
+for i in 1:nbus
+    set_start_value(V[i], Bus.V0[i])
+    set_start_value(th[i], Bus.Th0[i]*3.14159265359/180)
+    set_start_value(Pg[i], Bus.Pg0[i])
+    set_start_value(Qg[i], Bus.Qg0[i])
+end
+@variable(m, Pde[Branch.branchnum])
+@variable(m, Qde[Branch.branchnum])
+@variable(m, Ppa[Branch.branchnum])
+@variable(m, Qpa[Branch.branchnum])
+for i in 1:nbranch
+    set_start_value(Pde[i], 0)
+    set_start_value(Qde[i], 0)
+    set_start_value(Ppa[i], 0)
+    set_start_value(Qpa[i], 0)
+end
+
+# Funcion Objetivo
+@objective(m, Min, sum(Pg[i] for i in 1:nbus if Bus.bustype[i] == 3))
+
+for k in 1:nbus
+    # Balance de potencia activa
+    @NLconstraint(m, Pg[k] - Bus.Pd[k] + V[k]^2*Bus.gshb[k]
+    - sum(Ppa[i] for i in in_lines[k])
+    - sum(Pde[i] for i in out_lines[k]) == 0)
+    # Balance de potencia reactiva
+    @NLconstraint(m, Qg[k] - Bus.Qd[k] + V[k]^2*Bus.bshb[k]
+    - sum(Qpa[i] for i in in_lines[k])
+    - sum(Qde[i] for i in out_lines[k]) == 0)
+end
+
+for i in 1:nbranch
+    a = convert(Int, Branch.from[i])
+    b = convert(Int, Branch.to[i])
+    # Pde
+    @NLconstraint(m, Pde[i] == Branch.g[i]*Branch.a[i]^2*V[a]^2
+    - Branch.a[i]*V[a]*V[b]*Branch.g[i]*cos(th[a]-th[b]+Branch.fi[i])
+    - Branch.a[i]*V[a]*V[b]*Branch.b[i]*sin(th[a]-th[b]+Branch.fi[i]))
+    # Qde
+    @NLconstraint(m, Qde[i] == -(Branch.b[i]+Branch.c[i])*Branch.a[i]^2*V[a]^2
+    - Branch.a[i]*V[a]*V[b]*Branch.g[i]*sin(th[a]-th[b]+Branch.fi[i])
+    + Branch.a[i]*V[a]*V[b]*Branch.b[i]*cos(th[a]-th[b]+Branch.fi[i]))
+    # Ppa
+    @NLconstraint(m, Ppa[i] == Branch.g[i]*V[b]^2
+    - Branch.a[i]*V[a]*V[b]*Branch.g[i]*cos(th[a]-th[b]+Branch.fi[i])
+    + Branch.a[i]*V[a]*V[b]*Branch.b[i]*sin(th[a]-th[b]+Branch.fi[i]))
+    # Qpa
+    @NLconstraint(m, Qpa[i] == -(Branch.b[i]+Branch.c[i])*V[b]^2
+    + Branch.a[i]*V[a]*V[b]*Branch.g[i]*sin(th[a]-th[b]+Branch.fi[i])
+    + Branch.a[i]*V[a]*V[b]*Branch.b[i]*cos(th[a]-th[b]+Branch.fi[i]))
+end
+
+# Fixed variables
+for i in 1:nbus
+    if Bus.bustype[i] != 3
+        @constraint(m, Pg[i] == Bus.Pg0[i])
+    end
+    if Bus.bustype[i] == 0
+        @constraint(m, Qg[i] == Bus.Qg0[i])
+    end
+    if Bus.bustype[i] != 0
+        @constraint(m, V[i] == Bus.V0[i])
+    end
+    if Bus.bustype[i] == 3
+        @constraint(m, th[i] == Bus.Th0[i]*3.14159265359/180)
+    end
+end
+
+print(m)
+
+JuMP.optimize!(m)
+status = termination_status(m)
+
+println("Status of the Optimization: ", status)
+println("Objective value: ", JuMP.objective_value(m)*Sbase)
+
+@printf "---------------------------------------------------------------------------------------------\n"
+@printf "-------------------------------------------RESULTS-------------------------------------------\n"
+@printf "---------------------------------------------------------------------------------------------\n"
+println("Status of the Optimization: ", status)
+println("Objective value: ", JuMP.objective_value(m)*Sbase)
+@printf "---------------------------------------------------------------------------------------------\n"
+@printf "                                         BUS__RESULTS                                        \n"
+@printf "---------------------------------------------------------------------------------------------\n"
+@printf "   Bus  Type    V0       Th0       Pg        Qg        Pd      Qd     gshb  bshb \n"
+@printf "---------------------------------------------------------------------------------------------\n"
+for i in 1:nbus
+    @printf "%5d" float(i)
+    @printf "%5d" float(Bus.bustype[i])
+    @printf "%10.4f" float(value(V[i]))
+    @printf "%10.4f" float(value(th[i])*180/3.14159265359)
+    @printf "%10.4f" float(value(Pg[i])*Sbase)
+    @printf "%10.4f" float(value(Qg[i])*Sbase)
+    @printf "%8.2f" float(Bus.Pd[i]*Sbase)
+    @printf "%8.2f" float(Bus.Qd[i]*Sbase)
+    @printf "%4.0f" float(Sbase*Bus.gshb[i]*value(V[i])^2)
+    @printf "%6.2f" float(Sbase*Bus.bshb[i]*value(V[i])^2)
+    @printf "\n"
+end
+@printf "---------------------------------------------------------------------------------------------\n"
+@printf "TOTAL"
+
+@printf "%35.4f" float(Sbase*sum(value(Pg[i]) for i in 1:nbus))
+@printf "%10.4f" float(Sbase*sum(value(Qg[i]) for i in 1:nbus))
+@printf "%8.2f" float(Sbase*sum(Bus.Pd[i] for i in 1:nbus))
+@printf "%8.2f" float(Sbase*sum(Bus.Qd[i] for i in 1:nbus))
+@printf "%4.0f" float(Sbase*sum(Bus.gshb[i]*value(V[i])^2 for i in 1:nbus))
+@printf "%4.0f" float(Sbase*sum(Bus.bshb[i]*value(V[i])^2 for i in 1:nbus))
+
+@printf "\n"
+@printf "---------------------------------------------------------------------------------------------\n"
+
+@printf "---------------------------------------------------------------------------------------------\n"
+@printf "                               BRANCH__RESULTS                               \n"
+@printf "---------------------------------------------------------------------------------------------\n"
+@printf " Branch From  To  Pij[MW]   Pji[MW]   Qij[MW]   Qji[MW]    Pls[MW]   Qls[MVAr]   SLoad \n"
+@printf "---------------------------------------------------------------------------------------------\n"
+
+for i in 1:nbranch
+    @printf "%5d" float(i)
+    @printf "%5d" float(Branch.from[i])
+    @printf "%5d" float(Branch.to[i])
+    @printf "%10.4f" float(Sbase*value(Pde[i]))
+    @printf "%10.4f" float(Sbase*value(Ppa[i]))
+    @printf "%10.4f" float(Sbase*value(Qde[i]))
+    @printf "%10.4f" float(Sbase*value(Qpa[i]))
+    @printf "%10.4f" float(Sbase*(value(Pde[i])+value(Ppa[i])))
+    @printf "%10.4f" float(Sbase*(value(Qde[i])+value(Qpa[i])))
+    @printf "%10.2f" float(max((Sbase*value(Pde[i]))^2+(Sbase*value(Qde[i])^2),
+    (Sbase*value(Ppa[i]))^2+(Sbase*value(Qpa[i])^2))/(Branch.smax[i]*Sbase)^2*100)
+    @printf "\n"
+end
+
+@printf "---------------------------------------------------------------------------------------------\n"
+@printf "TOTAL"
+
+@printf "%60.4f" float(Sbase*sum(value(Pde[i])+value(Ppa[i]) for i in 1:nbranch))
+@printf "%10.4f" float(Sbase*sum(value(Qde[i])+value(Qpa[i]) for i in 1:nbranch))
+@printf "\n"
+@printf "---------------------------------------------------------------------------------------------\n"
