@@ -10,7 +10,7 @@ m = Model(with_optimizer(Ipopt.Optimizer))
 Vnom= 1.00
 
 # Sistema a Simular
-system_name = "IEEE30"
+system_name = "IEEE14"
 
 # Adquisition DATA
 include("SMC_dat.jl")
@@ -42,14 +42,12 @@ for i in 1:nbranch
 end
 @variable(m, Pg[Bus.busnum])
 for i in 1:nbus
-   if Bus.bustype[i] == 3
-   	set_start_value(Pg[i], 0)
-   else
    	set_start_value(Pg[i], Bus.Pg0[i])
-   end
 end
 @variable(m, Qg[Bus.busnum])
-
+for i in 1:nbus
+   	set_start_value(Qg[i], Bus.Qg0[i])
+end
 #@show Vsqr
 #@show th
 #@show Isqr
