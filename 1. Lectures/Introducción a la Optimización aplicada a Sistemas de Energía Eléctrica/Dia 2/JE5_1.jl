@@ -16,7 +16,7 @@ system_name = "IEEE14"
 include("SMC_dat.jl")
 
 # Variables
-@variable(m, V[Bus.busnum] >= 0)
+@variable(m, V[Bus.busnum])
 for i in 1:nbus
     if Bus.bustype[i] == 0
     	set_start_value(V[i], Vnom)
@@ -44,15 +44,15 @@ end
 for i in 1:nbranch
 	set_start_value(Qde[i], 0)
 end
-@variable(m, Pg[Cgen.cgennum])
-for i in 1:ncgen
-   if Bus.bustype[Cgen.bus[i]] == 3
+@variable(m, Pg[Bus.busnum])
+for i in 1:nbus
+   if Bus.bustype[i] == 3
    	set_start_value(Pg[i], 0)
    else
    	set_start_value(Pg[i], Bus.Pg0[i])
    end
 end
-@variable(m, Qg[Cgen.cgennum])
+@variable(m, Qg[Bus.busnum])
 
 #@show Vsqr
 #@show th
@@ -63,15 +63,15 @@ end
 #@show Qg
 @printf "-----------------------------------------------------------------------------------------\n"
 @printf "                                                                                         \n"
-@objective(m, Min, sum(Pg[i] for i=1:ncgen if Bus.bustype[Cgen.bus[i]] == 3))
+@objective(m, Min, sum(Pg[i] for i=1:nbus if Bus.bustype[i] == 3))
 #end
 for k in 1:nbus
 	#P_balance_rule
-	@constraint(m, sum(Pg[i] for i=1:ncgen if Cgen.bus[i] == k ) - Bus.Pd[k] + V[k]*V[k]*Bus.gshb[k]
+	@constraint(m, Pg[k] - Bus.Pd[k] + V[k]^2*Bus.gshb[k]
 	 -	sum(Ppara[i] for i in in_lines[k])
 	 -	sum(Pde[i]  for i in out_lines[k]) == 0)
 	#Q_balance_rule
-	@constraint(m, sum(Qg[i] for i=1:ncgen if Cgen.bus[i] == k ) - Bus.Qd[k] + V[k]*V[k]*Bus.bshb[k]
+	@constraint(m, Qg[k] - Bus.Qd[k] + V[k]^2*Bus.bshb[k]
 	 -	sum(Qpara[i] for i in in_lines[k])
 	 -	sum(Qde[i] for i in out_lines[k]) == 0)
 end
