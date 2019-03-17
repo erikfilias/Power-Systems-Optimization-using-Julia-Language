@@ -145,7 +145,7 @@ Wgen=DATA4(wgen[:,1], wgen[:,2], wgen[:,3],	wgen[:,4], wgen[:,5], wgen[:,6], wge
 		wgen[:,10], wgen[:,11], wgen[:,12], wgen[:,13], wgen[:,14])
 Scen=DATA5(scen[:,1], scen[:,2], scen[:,3],	scen[:,4], scen[:,5])
 #
-#calculated parameters
+# calculated parameters
 for i in 1:nbranch
 	if Branch.r[i] == 0
 		Branch.r[i] = 1e-6
@@ -182,15 +182,15 @@ Bus.Qg0 /= Sbase
 for i in 1:nbranch
 
 	Branch.z2[i] = Branch.r[i]^2+Branch.x[i]^2
-	Branch.g[i] = Branch.r[i]/Branch.z2[i]
-	Branch.b[i] = -Branch.x[i]/Branch.z2[i]
+	Branch.g[i] = Branch.r[i]/(Branch.r[i]^2+Branch.x[i]^2)
+	Branch.b[i] = -Branch.x[i]/(Branch.r[i]^2+Branch.x[i]^2)
 	Branch.c[i] /= 2
 	if Branch.a[i] == 0
 		Branch.a[i] = 1
 	else
 		Branch.a[i] = 1/Branch.a[i]
 	end
-	Branch.fi[i] *= 3.14159265359/180
+	Branch.fi[i] *= 3.14159/180
 end
 Branch.smax /= Sbase
 
@@ -215,15 +215,6 @@ for i in 1:nbranch
 	Branch.b[i] = Branch.b[i]*Branch.n0[i]
 	Branch.c[i] = Branch.c[i]*Branch.n0[i]
 	Branch.smax[i] = Branch.smax[i]*Branch.n0[i]
-	# if BranchNew.n0[i] != 0
-	# 	BranchNew.r[i] = Branch.r[i]/BranchNew.n0[i]
-	# 	BranchNew.x[i] = Branch.x[i]/BranchNew.n0[i]
-	# 	BranchNew.z2[i] = 1/(BranchNew.g[i]^2+BranchNew.b[i]^2)
-	# else
-	# 	BranchNew.r[i] = 0
-	# 	BranchNew.x[i] = 0
-	# 	BranchNew.z2[i] = 0
-	# end
 end
 for i in 1:nbus
 	Bus.bshb[i] = Bus.bshb[i]*Bus.n0[i]
