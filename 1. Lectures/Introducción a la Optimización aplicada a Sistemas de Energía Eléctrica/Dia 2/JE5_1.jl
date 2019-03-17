@@ -22,7 +22,7 @@ for i in 1:nbus
 end
 @variable(m, th[Bus.busnum])
 for i in 1:nbus
-    set_start_value(th[i], Bus.Th0[i]*3.14159265359/180)
+    set_start_value(th[i], Bus.Th0[i]*3.14159/180)
 end
 @variable(m, Pde[Branch.branchnum])
 for i in 1:nbranch
@@ -105,7 +105,7 @@ for i in 1:nbus
 		@constraint(m, V[i] == Bus.Vgen[i])
 	end
 	if Bus.bustype[i] == 3
-		@constraint(m, th[i] == Bus.Th0[i]*3.14159265359/180)
+		@constraint(m, th[i] == Bus.Th0[i]*3.14159/180)
 	end
 end
 
@@ -131,7 +131,7 @@ for i in 1:nbus
     @printf "%5d" float(i)
     @printf "%5d" float(Bus.bustype[i])
     @printf "%10.4f" float(value(V[i]))
-    @printf "%10.4f" float(value(th[i])*180/3.14159265359)
+    @printf "%10.4f" float(value(th[i])*180/3.14159)
     @printf "%10.4f" float(value(Pg[i])*Sbase)
     @printf "%10.4f" float(value(Qg[i])*Sbase)
     @printf "%10.4f" float(Bus.Pd[i]*Sbase)

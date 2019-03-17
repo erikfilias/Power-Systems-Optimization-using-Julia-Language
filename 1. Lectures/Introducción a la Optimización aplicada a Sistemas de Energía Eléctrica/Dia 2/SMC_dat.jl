@@ -190,7 +190,7 @@ for i in 1:nbranch
 	else
 		Branch.a[i] = 1/Branch.a[i]
 	end
-	Branch.fi[i] *= 3.14159265359/180
+	Branch.fi[i] *= 3.14159/180
 end
 Branch.smax /= Sbase
 
