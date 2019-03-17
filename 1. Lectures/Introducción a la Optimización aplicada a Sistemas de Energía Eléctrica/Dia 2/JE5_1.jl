@@ -10,23 +10,19 @@ m = Model(with_optimizer(Ipopt.Optimizer))
 Vnom= 1.00
 
 # Sistema a Simular
-system_name = "IEEE14"
+system_name = "IEEE30"
 
 # Adquisition DATA
 include("SMC_dat.jl")
 
 # Variables
-@variable(m, V[Bus.busnum])
+@variable(m, V[Bus.busnum] >= 0)
 for i in 1:nbus
-    if Bus.bustype[i] == 0
-    	set_start_value(V[i], Vnom)
-    end
+    set_start_value(V[i], Bus.V0[i])
 end
 @variable(m, th[Bus.busnum])
 for i in 1:nbus
-    if Bus.bustype[i] != 3
-    	set_start_value(th[i], 0)
-    end
+    set_start_value(th[i], Bus.Th0[i]*3.14159265359/180)
 end
 @variable(m, Pde[Branch.branchnum])
 for i in 1:nbranch
@@ -67,11 +63,11 @@ end
 #end
 for k in 1:nbus
 	#P_balance_rule
-	@constraint(m, Pg[k] - Bus.Pd[k] + V[k]^2*Bus.gshb[k]
+	@NLconstraint(m, Pg[k] - Bus.Pd[k] + V[k]^2*Bus.gshb[k]
 	 -	sum(Ppara[i] for i in in_lines[k])
 	 -	sum(Pde[i]  for i in out_lines[k]) == 0)
 	#Q_balance_rule
-	@constraint(m, Qg[k] - Bus.Qd[k] + V[k]^2*Bus.bshb[k]
+	@NLconstraint(m, Qg[k] - Bus.Qd[k] + V[k]^2*Bus.bshb[k]
 	 -	sum(Qpara[i] for i in in_lines[k])
 	 -	sum(Qde[i] for i in out_lines[k]) == 0)
 end
@@ -104,9 +100,9 @@ for i in 1:nbus
 	if Bus.bustype[i] != 3
 		@constraint(m, Pg[i] == Bus.Pg0[i])
 	end
-	# if Bus.bustype[i] == 0
-	# 	@constraint(m, Qg[i] == Bus.Qg0[i])
-	# end
+	if Bus.bustype[i] == 0
+		@constraint(m, Qg[i] == Bus.Qg0[i])
+	end
 	if Bus.bustype[i] != 0
 		@constraint(m, V[i] == Bus.V0[i])
 	end
@@ -117,7 +113,7 @@ end
 
 
 # Print Model
-print(m)
+# print(m)
 
 # Initialization of the optimization
 JuMP.optimize!(m)
@@ -126,9 +122,6 @@ status = termination_status(m)
 @printf "-----------------------------------------RESULTS--------------------------------------\n"
 @printf "--------------------------------------------------------------------------------------\n"
 println("Status of the Optimization: ", status)
-# println("Utilidad: ", JuMP.objective_value(m))
-# println("Mesas  = ", JuMP.value(x))
-# println("Sillas = ", JuMP.value(y))
 
 println("Objective value: ", JuMP.objective_value(m)*Sbase)
 @printf "---------------------------------------------------------------------------------------------\n"
@@ -151,26 +144,7 @@ for i in 1:nbus
 end
 @printf "---------------------------------------------------------------------------------------------\n"
 @printf "TOTAL"
-# a=0
-# b=0
-# c=0
-# d=0
-# e=0
-# f=0
-# for i in 1:nbus
-# 	global a
-# 	global b
-# 	global c
-# 	global d
-# 	global e
-# 	global f
-#     a = a + value(Pg[i])
-#     b = b + value(Qg[i])
-#     c = c + Bus.Pd[i]
-#     d = d + Bus.Qd[i]
-#     e = e + Bus.gshb[i]*(value(V[i]))^2
-#     f = f + Bus.bshb[i]*(value(V[i]))^2
-# end
+
 @printf "%35.4f" float(Sbase*sum(value(Pg[i]) for i in 1:nbus))
 @printf "%10.4f" float(Sbase*sum(value(Qg[i]) for i in 1:nbus))
 @printf "%10.4f" float(Sbase*sum(Bus.Pd[i] for i in 1:nbus))
@@ -201,22 +175,7 @@ end
 
 @printf "-----------------------------------------------------------------------------\n"
 @printf "TOTAL"
-# a = 0
-# b = 0
-# for k in 1:nbus
-# 	global a
-# 	global b
-#     for l in 1:nbus
-#         for i in 1:nbranch
-#             if k == Branch.from[i]
-#                 if l == Branch.to[i]
-#                     a = a + (value(Pde[i])+value(Ppara[i]))
-#                     b = b + (value(Qde[i])+value(Qpara[i]))
-#                 end
-#             end
-#         end
-#     end
-# end
+
 @printf "%60.4f" float(Sbase*sum((value(Pde[i])+value(Ppara[i])) for i in 1:nbranch))
 @printf "%10.4f" float(Sbase*sum((value(Qde[i])+value(Qpara[i])) for i in 1:nbranch))
 @printf "\n"
