@@ -10,7 +10,7 @@ m = Model(with_optimizer(Ipopt.Optimizer))
 Vnom= 1.00
 
 # Sistema a Simular
-system_name = "IEEE14"
+system_name = "IEEE3"
 
 # Adquisition DATA
 include("SMC_dat.jl")
