@@ -1,0 +1,2 @@
+version Julia 1.1.0
+version JuMP 0.19
